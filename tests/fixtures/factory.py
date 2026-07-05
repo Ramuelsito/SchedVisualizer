@@ -20,8 +20,8 @@ def make_solution(
 ) -> Solution:
     """Generate a synthetic Solution with no overlaps per actor."""
     rng = random.Random(seed)
-    actor_ids  = [f"actor_{i:03d}" for i in range(n_actors)]
-    event_ids  = [f"event_{chr(65 + i)}" for i in range(n_events)]
+    actor_ids = [f"actor_{i:03d}" for i in range(n_actors)]
+    event_ids = [f"event_{chr(65 + i)}" for i in range(n_events)]
 
     assignments: list[Assignment] = []
 
@@ -30,17 +30,19 @@ def make_solution(
         for _ in range(avg_assignments_per_actor):
             if cursor >= timeline_length:
                 break
-            gap      = rng.randint(0, 2)
-            start    = cursor + gap
+            gap = rng.randint(0, 2)
+            start = cursor + gap
             duration = rng.randint(1, 3)
             if start + duration > timeline_length:
                 break
-            assignments.append(Assignment(
-                actor_id=actor_id,
-                event_id=rng.choice(event_ids),
-                start=start,
-                duration=duration,
-            ))
+            assignments.append(
+                Assignment(
+                    actor_id=actor_id,
+                    event_id=rng.choice(event_ids),
+                    start=start,
+                    duration=duration,
+                )
+            )
             cursor = start + duration
 
     return Solution(assignments=assignments)

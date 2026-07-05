@@ -1,13 +1,12 @@
+"""Registry used to discover chart implementations by stable name."""
+
 from __future__ import annotations
 
 from collections.abc import Iterable
 
 from .base import Chart
 
-"""
-    A registry for chart types. It allows registering and 
-    retrieving chart implementations by name.
-"""
+
 class ChartRegistry:
     def __init__(self, charts: Iterable[Chart] = ()) -> None:
         self._charts: dict[str, Chart] = {}
@@ -24,9 +23,7 @@ class ChartRegistry:
             return self._charts[name]
         except KeyError as exc:
             available = ", ".join(self.names())
-            raise ValueError(
-                f"Unknown chart: {name!r}. Available: [{available}]"
-            ) from exc
+            raise ValueError(f"Unknown chart: {name!r}. Available: [{available}]") from exc
 
     def names(self) -> tuple[str, ...]:
         return tuple(self._charts)

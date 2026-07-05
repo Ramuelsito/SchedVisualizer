@@ -12,7 +12,7 @@ from .charts.registry import ChartRegistry
 from .config import VisConfig
 from .core.color_registry import ColorRegistry
 from .domain.solution import Solution
-from .export.dashboard import DashboardExporter
+from .export import DashboardOutput, DashboardExporter
 from .schema.input_schema import SolutionInput
 
 
@@ -21,15 +21,13 @@ class VisualizationEngine:
         self,
         config: VisConfig | None = None,
         chart_registry: ChartRegistry | None = None,
-        dashboard_exporter: DashboardExporter | None = None,
+        dashboard_exporter: DashboardOutput | None = None,
     ) -> None:
         self._config = config or VisConfig()
         self._solution: Solution | None = None
         self._color_registry = ColorRegistry(self._config)
         self._charts = chart_registry or create_default_chart_registry()
-        self._dashboard_exporter = (
-            dashboard_exporter or DashboardExporter(self._config)
-        )
+        self._dashboard_exporter = dashboard_exporter or DashboardExporter(self._config)
 
     def from_dict(self, data: dict) -> "VisualizationEngine":
         self._solution = SolutionInput.model_validate(data).to_domain()
@@ -107,16 +105,12 @@ class VisualizationEngine:
             except KeyError as exc:
                 raise ValueError("Chart specification requires a 'type'") from exc
         else:
-            raise ValueError(
-                f"Chart spec must be str or dict, got {type(spec).__name__}"
-            )
+            raise ValueError(f"Chart spec must be str or dict, got {type(spec).__name__}")
 
         chart = self._charts.get(chart_name)
         label = chart.label
         if options:
-            option_label = ", ".join(
-                f"{name}={value}" for name, value in options.items()
-            )
+            option_label = ", ".join(f"{name}={value}" for name, value in options.items())
             label = f"{label} ({option_label})"
 
         return label, self.render(chart_name, **options)
@@ -129,15 +123,21 @@ class VisualizationEngine:
         """Display figure in browser or notebook."""
         fig.show()
 
-    def export(self, fig: go.Figure, path: str | Path, fmt: str = "png", scale: float = 2.0) -> None:
+    def export(
+        self,
+        fig: go.Figure,
+        path: str | Path,
+        fmt: str = "png",
+        scale: float = 2.0,
+    ) -> None:
         """Export a single figure to PNG, PDF, SVG, or HTML."""
         path = Path(path)
-        if fmt == "html": fig.write_html(str(path))
-        else: fig.write_image(str(path), format=fmt, scale=scale)
+        if fmt == "html":
+            fig.write_html(str(path))
+        else:
+            fig.write_image(str(path), format=fmt, scale=scale)
 
     def _require_solution(self) -> Solution:
         if self._solution is None:
-            raise RuntimeError(
-                "No solution loaded. Call from_dict() or from_json() first."
-            )
+            raise RuntimeError("No solution loaded. Call from_dict() or from_json() first.")
         return self._solution

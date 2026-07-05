@@ -16,7 +16,6 @@ def make_gantt_figure(assignments, config=None):
 
 
 class TestGanttRenderer:
-
     def test_returns_plotly_figure(self):
         fig, _ = make_gantt_figure([Assignment("A1", "E1", 0, 3)])
         assert isinstance(fig, go.Figure)
@@ -47,7 +46,7 @@ class TestGanttRenderer:
         few_actors = [Assignment(f"A{i}", "E1", 0, 2) for i in range(3)]
         many_actors = [Assignment(f"A{i}", "E1", 0, 2) for i in range(20)]
 
-        fig_few, _  = make_gantt_figure(few_actors)
+        fig_few, _ = make_gantt_figure(few_actors)
         fig_many, _ = make_gantt_figure(many_actors)
         assert fig_many.layout.height > fig_few.layout.height
 
@@ -59,8 +58,8 @@ class TestGanttRenderer:
 
     def test_xaxis_range_matches_timeline(self):
         assignments = [
-            Assignment("A1", "E1", 5,  3),   # timeline_start = 5
-            Assignment("A2", "E1", 10, 4),   # timeline_end   = 14
+            Assignment("A1", "E1", 5, 3),  # timeline_start = 5
+            Assignment("A2", "E1", 10, 4),  # timeline_end   = 14
         ]
         fig, vm = make_gantt_figure(assignments)
         xrange = fig.layout.xaxis.range
@@ -73,6 +72,7 @@ class TestEngineEndToEnd:
 
     def test_from_dict_gantt(self):
         from sched_viz import VisualizationEngine
+
         data = {
             "assignments": [
                 {"actor_id": "A1", "event_id": "E1", "start": 0, "duration": 3},
@@ -84,6 +84,7 @@ class TestEngineEndToEnd:
 
     def test_filter_then_gantt(self):
         from sched_viz import VisualizationEngine
+
         data = {
             "assignments": [
                 {"actor_id": "A1", "event_id": "E1", "start": 0, "duration": 2},
@@ -97,5 +98,6 @@ class TestEngineEndToEnd:
 
     def test_no_solution_raises(self):
         from sched_viz import VisualizationEngine
+
         with pytest.raises(RuntimeError, match="No solution loaded"):
             VisualizationEngine().gantt()

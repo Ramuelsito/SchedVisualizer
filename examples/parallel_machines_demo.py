@@ -33,11 +33,46 @@ from sched_viz import VisualizationEngine
 # ---------------------------------------------------------------------------
 
 PROCESSING_TIMES = {
-    0: 34, 1: 66,  2: 27,  3: 4,   4: 23,  5: 85,  6: 43,  7: 4,
-    8: 8,  9: 2,  10: 13, 11: 48, 12: 5,  13: 52, 14: 67, 15: 56,
-   16: 67, 17: 6,  18: 29, 19: 9,  20: 20, 21: 76, 22: 98, 23: 7,
-   24: 90, 25: 56, 26: 33, 27: 74, 28: 46, 29: 89, 30: 2,  31: 10,
-   32: 80, 33: 20, 34: 67, 35: 31, 36: 82, 37: 77, 38: 18, 39: 96,
+    0: 34,
+    1: 66,
+    2: 27,
+    3: 4,
+    4: 23,
+    5: 85,
+    6: 43,
+    7: 4,
+    8: 8,
+    9: 2,
+    10: 13,
+    11: 48,
+    12: 5,
+    13: 52,
+    14: 67,
+    15: 56,
+    16: 67,
+    17: 6,
+    18: 29,
+    19: 9,
+    20: 20,
+    21: 76,
+    22: 98,
+    23: 7,
+    24: 90,
+    25: 56,
+    26: 33,
+    27: 74,
+    28: 46,
+    29: 89,
+    30: 2,
+    31: 10,
+    32: 80,
+    33: 20,
+    34: 67,
+    35: 31,
+    36: 82,
+    37: 77,
+    38: 18,
+    39: 96,
 }
 
 SOLUTION = """
@@ -50,6 +85,7 @@ Total TCT: 12960
 # ---------------------------------------------------------------------------
 # Adapter
 # ---------------------------------------------------------------------------
+
 
 def parse_parallel_machine_solution(
     solution_str: str,
@@ -90,20 +126,22 @@ def parse_parallel_machine_solution(
             continue
 
         machine_id = int(m.group(1))
-        job_ids    = [int(j) for j in m.group(2).strip().split()]
-        tct        = int(m.group(3)) if m.group(3) else None
+        job_ids = [int(j) for j in m.group(2).strip().split()]
+        tct = int(m.group(3)) if m.group(3) else None
 
         cursor = 0
         for job_id in job_ids:
             pt = processing_times[job_id]
-            assignments.append({
-                "actor_id":       f"machine_{machine_id}",
-                "event_id":       f"job_{job_id:02d}",   # zero-padded for alphabetical = numerical order
-                "start":          cursor,
-                "duration":       pt,
-                "participant_id": str(job_id),            # never visualized
-                "metadata":       {"job_id": job_id, "machine_tct": tct},
-            })
+            assignments.append(
+                {
+                    "actor_id": f"machine_{machine_id}",
+                    "event_id": f"job_{job_id:02d}",  # zero-padded for alphabetical = numerical order
+                    "start": cursor,
+                    "duration": pt,
+                    "participant_id": str(job_id),  # never visualized
+                    "metadata": {"job_id": job_id, "machine_tct": tct},
+                }
+            )
             cursor += pt
 
     return {"assignments": assignments, "metadata": metadata}
@@ -127,7 +165,7 @@ viz.from_dict(data).export_dashboard(
     charts=[
         # Gantt: X axis = real time, bar width = processing time
         # merge_bars=False because each job is a unique event and never repeats
-        {"type": "gantt",   "merge_bars": False, "sort_actors": "alpha"},
+        {"type": "gantt", "merge_bars": False, "sort_actors": "alpha"},
         # Utilization: which machine carries more total processing time
         "utilization",
         # Duration distribution: spread of job processing times

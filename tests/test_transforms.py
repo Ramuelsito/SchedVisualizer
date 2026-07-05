@@ -1,9 +1,8 @@
 """Tests for the transform layer (GanttTransformer → GanttViewModel)."""
 
-import pytest
 from sched_viz.domain.models import Assignment
 from sched_viz.domain.solution import Solution
-from sched_viz.transforms.gantt_transform import GanttTransformer, GanttViewModel, GanttBar
+from sched_viz.transforms.gantt_transform import GanttTransformer, GanttViewModel
 
 
 def make_solution(*assignments) -> Solution:
@@ -11,7 +10,6 @@ def make_solution(*assignments) -> Solution:
 
 
 class TestGanttTransformer:
-
     def test_returns_gantt_view_model(self):
         s = make_solution(Assignment("A1", "E1", 0, 3))
         vm = GanttTransformer().transform(s)
@@ -47,10 +45,10 @@ class TestGanttTransformer:
 
     def test_actor_order_by_load(self):
         s = make_solution(
-            Assignment("A1", "E1", 0,  1),
-            Assignment("A2", "E1", 0,  1),
-            Assignment("A2", "E1", 2,  1),
-            Assignment("A2", "E1", 4,  1),
+            Assignment("A1", "E1", 0, 1),
+            Assignment("A2", "E1", 0, 1),
+            Assignment("A2", "E1", 2, 1),
+            Assignment("A2", "E1", 4, 1),
         )
         vm = GanttTransformer(sort_actors="load").transform(s)
         assert vm.actor_order[0] == "A2"  # most assigned

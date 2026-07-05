@@ -9,8 +9,10 @@ from sched_viz.domain.solution import Solution
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def make_assignment(actor="A1", event="E1", start=0, duration=2) -> Assignment:
     return Assignment(actor_id=actor, event_id=event, start=start, duration=duration)
+
 
 def make_solution(*assignments) -> Solution:
     return Solution(assignments=list(assignments))
@@ -19,6 +21,7 @@ def make_solution(*assignments) -> Solution:
 # ---------------------------------------------------------------------------
 # Assignment
 # ---------------------------------------------------------------------------
+
 
 class TestAssignment:
     def test_end_is_start_plus_duration(self):
@@ -57,6 +60,7 @@ class TestAssignment:
 # ---------------------------------------------------------------------------
 # Solution — properties
 # ---------------------------------------------------------------------------
+
 
 class TestSolutionProperties:
     def test_actor_ids(self):
@@ -105,14 +109,15 @@ class TestSolutionProperties:
 # Solution — filters
 # ---------------------------------------------------------------------------
 
+
 class TestSolutionFilters:
     def setup_method(self):
         self.solution = make_solution(
-            Assignment("A1", "E1", 0,  3),
-            Assignment("A1", "E2", 5,  2),
-            Assignment("A2", "E1", 1,  4),
-            Assignment("A2", "E3", 8,  2),
-            Assignment("A3", "E2", 2,  5),
+            Assignment("A1", "E1", 0, 3),
+            Assignment("A1", "E2", 5, 2),
+            Assignment("A2", "E1", 1, 4),
+            Assignment("A2", "E3", 8, 2),
+            Assignment("A3", "E2", 2, 5),
         )
 
     def test_filter_by_actors(self):

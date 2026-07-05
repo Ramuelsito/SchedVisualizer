@@ -35,9 +35,12 @@ data = {
 }
 
 viz = VisualizationEngine()
-viz.from_dict(data).export_dashboard("output/report.html", charts=[
-    {"type": "gantt", "sort_actors": "load"},
-    {"type": "heatmap", "metric": "occupancy"},
-    "utilization"
-])
+viz.from_dict(data).export_dashboard(
+    "output/report.html",
+    charts=[
+        {"type": "gantt", "sort_actors": "load"},
+        {"type": "heatmap", "metric": "occupancy"},
+        "utilization",
+    ],
+)
 print("HTML generado")

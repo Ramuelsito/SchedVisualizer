@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ..config import VisConfig
 
+
 class ColorRegistry:
     def __init__(self, config: VisConfig):
         self._palette = config.event_palette

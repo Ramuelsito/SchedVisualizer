@@ -27,7 +27,9 @@ class TestAssignmentInput:
         a = AssignmentInput(actor_id="A1", event_id="E1", start=0, duration=1)
         assert a.participant_id is None
 
-        a2 = AssignmentInput(actor_id="A1", event_id="E1", start=0, duration=1, participant_id="P99")
+        a2 = AssignmentInput(
+            actor_id="A1", event_id="E1", start=0, duration=1, participant_id="P99"
+        )
         assert a2.participant_id == "P99"
 
     def test_rejects_empty_actor_id(self):
@@ -37,6 +39,16 @@ class TestAssignmentInput:
     def test_rejects_empty_event_id(self):
         with pytest.raises(ValidationError):
             AssignmentInput(actor_id="A1", event_id="", start=0, duration=1)
+
+    def test_rejects_whitespace_only_ids(self):
+        with pytest.raises(ValidationError):
+            AssignmentInput(actor_id="   ", event_id="E1", start=0, duration=1)
+
+    def test_strips_identifier_whitespace(self):
+        assignment = AssignmentInput(actor_id=" A1 ", event_id=" E1 ", start=0, duration=1)
+
+        assert assignment.actor_id == "A1"
+        assert assignment.event_id == "E1"
 
     def test_rejects_negative_start(self):
         with pytest.raises(ValidationError):
@@ -48,6 +60,7 @@ class TestAssignmentInput:
 
     def test_to_domain_produces_assignment(self):
         from sched_viz.domain.models import Assignment
+
         a = AssignmentInput(actor_id="A1", event_id="E1", start=2, duration=3)
         domain = a.to_domain()
         assert isinstance(domain, Assignment)
@@ -79,7 +92,7 @@ class TestSolutionInput:
         """Actors can have idle time — gaps must NOT be rejected."""
         data = {
             "assignments": [
-                {"actor_id": "A1", "event_id": "E1", "start": 0,  "duration": 2},
+                {"actor_id": "A1", "event_id": "E1", "start": 0, "duration": 2},
                 {"actor_id": "A1", "event_id": "E1", "start": 10, "duration": 2},  # gap of 8
             ]
         }

@@ -3,21 +3,31 @@ from __future__ import annotations
 from collections.abc import Sequence
 from html import escape
 from pathlib import Path
+from typing import Literal
 
-import plotly.graph_objects as go
 import plotly.io as pio
+from plotly.offline import get_plotlyjs
 
 from ..config import VisConfig
+from .base import LabeledFigure
 
 
-LabeledFigure = tuple[str, go.Figure]
+PlotlyJsMode = Literal["inline", "cdn"]
+PLOTLY_CDN_URL = "https://cdn.plot.ly/plotly-2.27.0.min.js"
 
 
 class DashboardExporter:
     """Convert labelled Plotly figures into a tabbed HTML dashboard."""
 
-    def __init__(self, config: VisConfig) -> None:
+    def __init__(
+        self,
+        config: VisConfig,
+        plotly_js: PlotlyJsMode = "inline",
+    ) -> None:
+        if plotly_js not in ("inline", "cdn"):
+            raise ValueError("plotly_js must be 'inline' or 'cdn'")
         self._config = config
+        self._plotly_js = plotly_js
 
     def export(
         self,
@@ -26,7 +36,9 @@ class DashboardExporter:
         title: str,
     ) -> None:
         html = self.build_html(figures=figures, title=title)
-        Path(path).write_text(html, encoding="utf-8")
+        destination = Path(path)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_text(html, encoding="utf-8")
 
     def build_html(
         self,
@@ -50,25 +62,29 @@ class DashboardExporter:
 
             buttons.append(
                 f'<button class="tab-btn{active}" '
-                f'onclick="showTab(\'tab-{index}\', this)">'
+                f"onclick=\"showTab('tab-{index}', this)\">"
                 f"{safe_label}</button>"
             )
-            panes.append(
-                f'<div id="tab-{index}" class="tab-pane{active}">'
-                f"{figure_html}</div>"
-            )
+            panes.append(f'<div id="tab-{index}" class="tab-pane{active}">{figure_html}</div>')
 
         return self._template(
             title=escape(title),
             tab_buttons="".join(buttons),
             tab_contents="".join(panes),
+            plotly_script=self._plotly_script(),
         )
+
+    def _plotly_script(self) -> str:
+        if self._plotly_js == "inline":
+            return f"<script>{get_plotlyjs()}</script>"
+        return f'<script src="{PLOTLY_CDN_URL}"></script>'
 
     def _template(
         self,
         title: str,
         tab_buttons: str,
         tab_contents: str,
+        plotly_script: str,
     ) -> str:
         config = self._config
 
@@ -78,7 +94,7 @@ class DashboardExporter:
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title>
-<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+{plotly_script}
 <style>
   *,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
   body{{background:{config.background_color};color:{config.text_primary};font-family:{config.font_family};min-height:100vh}}
