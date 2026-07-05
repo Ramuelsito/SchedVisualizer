@@ -1,3 +1,4 @@
+.gitignore
 # --------------------------------------------------
 # Python: bytecode y caché
 # --------------------------------------------------
@@ -69,3 +70,6 @@ Thumbs.db
 *.log
 *.tmp
 *.temp
+
+Refactoring.md
+QualityImprovement.md
