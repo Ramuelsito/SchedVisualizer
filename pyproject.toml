@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "sched-viz"
@@ -26,11 +26,48 @@ dependencies = [
 
 [project.optional-dependencies]
 export = ["kaleido>=0.2"]
-dev    = ["pytest>=7", "kaleido>=0.2"]
-
-[project.urls]
-Homepage   = "https://github.com/yourusername/sched-viz"
-Repository = "https://github.com/yourusername/sched-viz"
+dev = [
+    "build>=1.2",
+    "kaleido>=0.2",
+    "mypy>=1.10",
+    "pytest>=7",
+    "pytest-cov>=5",
+    "ruff>=0.6",
+    "twine>=5",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+sched_viz = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-config --strict-markers"
+
+[tool.coverage.run]
+branch = true
+source = ["sched_viz"]
+
+[tool.coverage.report]
+fail_under = 85
+show_missing = true
+skip_covered = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+# Start with correctness rules. Expand this list after formatting the legacy files.
+select = ["E9", "F63", "F7", "F82"]
+
+[tool.mypy]
+python_version = "3.11"
+packages = ["sched_viz"]
+check_untyped_defs = true
+ignore_missing_imports = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
