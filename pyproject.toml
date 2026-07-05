@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "sched-viz"
+version = "0.1.0"
+description = "Domain-agnostic scheduling solution visualization library"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+keywords = ["scheduling", "visualization", "gantt", "optimization", "operations-research"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
+dependencies = [
+    "plotly>=5.20",
+    "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+export = ["kaleido>=0.2"]
+dev    = ["pytest>=7", "kaleido>=0.2"]
+
+[project.urls]
+Homepage   = "https://github.com/yourusername/sched-viz"
+Repository = "https://github.com/yourusername/sched-viz"
+
+[tool.setuptools.packages.find]
+where = ["src"]
